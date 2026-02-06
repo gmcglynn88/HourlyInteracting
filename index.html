@@ -861,6 +861,103 @@
       font-size: 12px;
       color: var(--text-light);
     }
+
+    /* Delta breakdown styling */
+    .delta-breakdown {
+      background: rgba(23, 162, 184, 0.05);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      border: 1px solid rgba(23, 162, 184, 0.2);
+    }
+
+    .delta-title {
+      color: var(--info);
+      font-weight: 600;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .delta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 16px;
+    }
+
+    .delta-card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .delta-value {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+
+    .delta-card.named .delta-value {
+      color: var(--primary-color);
+    }
+
+    .delta-card.hourly .delta-value {
+      color: var(--success);
+    }
+
+    .delta-card.nologin .delta-value {
+      color: var(--text-light);
+    }
+
+    .delta-card.total .delta-value {
+      color: var(--info);
+    }
+
+    .delta-label {
+      font-size: 12px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Combined hour distribution section */
+    .hour-distribution-combined {
+      background: linear-gradient(135deg, rgba(23, 162, 184, 0.05) 0%, rgba(19, 132, 150, 0.05) 100%);
+      border-radius: 14px;
+      padding: 32px;
+      margin-bottom: 32px;
+      border: 2px solid rgba(23, 162, 184, 0.2);
+    }
+
+    .hour-distribution-combined h2 {
+      color: var(--info);
+      font-size: 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hour-distribution-combined h2:before {
+      content: "⏱️";
+      font-size: 28px;
+    }
+
+    .hour-distribution-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    @media (max-width: 1024px) {
+      .hour-distribution-row {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1076,6 +1173,31 @@
                   <div style="font-size:12px;color:var(--text-light);">Other role users</div>
                 </div>
               </div>
+
+              <!-- Combined Hour and Agent Distribution Section -->
+              <div class="section-divider"></div>
+              
+              <h3 class="section-title">📊 Hour Distribution Analysis</h3>
+              <p style="color:var(--text-light);margin-bottom:16px;font-size:14px;">
+                Breakdown of interacting hours and agent count across hour buckets
+              </p>
+              
+              <div class="hour-distribution-row">
+                <div>
+                  <h4 style="color:var(--primary-color);font-size:16px;margin-bottom:12px;">Total Hours per Bucket</h4>
+                  <div class="bucket-container" id="hourBuckets"></div>
+                </div>
+                
+                <div>
+                  <h4 style="color:var(--primary-color);font-size:16px;margin-bottom:12px;">Agent Count per Bucket</h4>
+                  <div class="agent-count-container" id="agentCounts"></div>
+                </div>
+              </div>
+              
+              <div style="margin-top:18px;font-size:13px;color:var(--text-light);text-align:center;">
+                <div>📊 <strong>Total Users: <span id="totalUsersCount">0</span></strong> | 👥 <strong>Agents: <span id="totalAgentsCount">0</span></strong></div>
+                <div style="font-size:12px;margin-top:6px;">Hover over buckets to see details</div>
+              </div>
             </div>
 
             <!-- Recommendation Section -->
@@ -1133,51 +1255,19 @@
                 </div>
               </div>
 
-              <!-- Delta Explanation -->
-              <div class="explanation-panel" id="deltaExplanation" style="display:none;">
-                <div class="explanation-title">
-                  <span>📊</span> User Breakdown Explanation
+              <!-- Delta Breakdown Section -->
+              <div class="delta-breakdown" id="deltaBreakdown" style="display:none;">
+                <div class="delta-title">
+                  <span>📊</span> 100 Agents Breakdown
                 </div>
                 <p style="font-size:14px;color:var(--text-color);margin-bottom:16px;">
-                  Your 100 agents are distributed across licence types as follows:
+                  Here's how your 100 agents are distributed across licence types:
                 </p>
-                <div class="user-breakdown-grid" id="userBreakdown"></div>
-                <ul class="explanation-list">
-                  <li>
-                    <span class="explanation-icon">👑</span>
-                    <span><strong>Named Users:</strong> Supervisors + Admins + Agents over threshold</span>
-                  </li>
-                  <li>
-                    <span class="explanation-icon">⏱️</span>
-                    <span><strong>Hourly Interacting:</strong> Only Agents with hours >0 but < threshold</span>
-                  </li>
-                  <li>
-                    <span class="explanation-icon">🚫</span>
-                    <span><strong>NOLOGIN:</strong> Agents with 0 hours (no licence consumption)</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-
-            <!-- Hour Distribution Section -->
-            <div class="hour-distribution-section">
-              <h2>Hour Distribution Analysis</h2>
-              <p style="color:var(--text-light);margin-bottom:24px;font-size:15px;">
-                Breakdown of interacting hours across your user base
-              </p>
-              
-              <div class="hour-distribution-container">
-                <div>
-                  <h3 class="section-title">📊 Total Hours per Bucket</h3>
-                  <div class="bucket-container" id="hourBuckets"></div>
-                  
-                  <div style="margin-top:18px;font-size:13px;color:var(--text-light);text-align:center;">
-                    <div>📊 <strong>Total Users: <span id="totalUsersCount">0</span></strong> | 👥 <strong>Agents: <span id="totalAgentsCount">0</span></strong></div>
-                    <div style="font-size:12px;margin-top:6px;">Hover over buckets to see details</div>
-                  </div>
+                <div class="delta-grid" id="deltaGrid"></div>
+                <div style="margin-top:16px;font-size:13px;color:var(--text-light);">
+                  <strong>Note:</strong> The "delta" (agents not shown in Named or Hourly) are NOLOGIN users (0 hours).
                 </div>
               </div>
-              <div id="hourStats" style="margin-top:18px;font-size:13px;color:var(--text-light);text-align:center;"></div>
             </div>
 
             <!-- Visualization Section -->
@@ -1312,6 +1402,7 @@
               </div>
             </div>
 
+            <!-- Moved Cost Analysis to Analysis Tab -->
             <div class="stats-grid" style="margin-top:24px;">
               <div class="card">
                 <h3 style="margin:0 0 18px;">💰 Cost Analysis</h3>
@@ -1568,8 +1659,8 @@
       recommendedCost: document.getElementById('recommendedCost'),
       savingsPercentage: document.getElementById('savingsPercentage'),
       allNamedCount: document.getElementById('allNamedCount'),
-      deltaExplanation: document.getElementById('deltaExplanation'),
-      userBreakdown: document.getElementById('userBreakdown')
+      deltaBreakdown: document.getElementById('deltaBreakdown'),
+      deltaGrid: document.getElementById('deltaGrid')
     };
 
     // ==================== UTILITY FUNCTIONS ====================
@@ -1831,6 +1922,7 @@
 
         renderUserTable();
         updateHourBuckets();
+        updateAgentCounts();
         updateHourBarChart();
         updateOverageTable();
 
@@ -1858,9 +1950,9 @@
       el.statOthers.textContent = others;
     }
 
-    function updateDeltaExplanation() {
+    function updateDeltaBreakdown() {
       if (!appState.analysisResults) {
-        el.deltaExplanation.style.display = 'none';
+        el.deltaBreakdown.style.display = 'none';
         return;
       }
 
@@ -1869,29 +1961,62 @@
       const agentNamed = results.agentNamed || 0;
       const agentHI = results.agentHI || 0;
       const agentNologin = totalAgents - agentNamed - agentHI;
+      
+      // Also show supervisors/admins breakdown
+      const supervisors = appState.userData.filter(u => u.userType === 'supervisor').length;
+      const admins = appState.userData.filter(u => u.userType === 'admin').length;
+      const others = appState.userData.filter(u => u.userType === 'other').length;
 
-      // Update the breakdown display
-      el.userBreakdown.innerHTML = `
-        <div class="user-breakdown-card">
-          <div class="breakdown-value" style="color:var(--primary-color);">${agentNamed}</div>
-          <div class="breakdown-label">Agents → Named</div>
+      // Update the delta breakdown display
+      el.deltaGrid.innerHTML = `
+        <div class="delta-card named">
+          <div class="delta-value">${agentNamed}</div>
+          <div class="delta-label">Agents → Named</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:4px;">(Over threshold)</div>
         </div>
-        <div class="user-breakdown-card">
-          <div class="breakdown-value" style="color:var(--success);">${agentHI}</div>
-          <div class="breakdown-label">Agents → Hourly</div>
+        <div class="delta-card hourly">
+          <div class="delta-value">${agentHI}</div>
+          <div class="delta-label">Agents → Hourly</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:4px;">(Under threshold)</div>
         </div>
-        <div class="user-breakdown-card">
-          <div class="breakdown-value" style="color:var(--text-light);">${agentNologin}</div>
-          <div class="breakdown-label">Agents → NOLOGIN</div>
+        <div class="delta-card nologin">
+          <div class="delta-value">${agentNologin}</div>
+          <div class="delta-label">Agents → NOLOGIN</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:4px;">(0 hours)</div>
         </div>
-        <div class="user-breakdown-card">
-          <div class="breakdown-value" style="color:var(--primary-color);">${totalAgents}</div>
-          <div class="breakdown-label">Total Agents</div>
+        <div class="delta-card total">
+          <div class="delta-value">${totalAgents}</div>
+          <div class="delta-label">Total Agents</div>
+          <div style="font-size:11px;color:var(--text-light);margin-top:4px;">100%</div>
         </div>
       `;
 
-      // Show the explanation panel
-      el.deltaExplanation.style.display = 'block';
+      // Add explanation
+      const explanation = document.createElement('div');
+      explanation.style.marginTop = '16px';
+      explanation.style.fontSize = '13px';
+      explanation.style.color = 'var(--text-color)';
+      explanation.innerHTML = `
+        <div><strong>Breakdown:</strong></div>
+        <div style="margin-top:8px;">
+          • <strong>${agentNamed}</strong> agents work over ${results.threshold} hours → Named Licence<br>
+          • <strong>${agentHI}</strong> agents work under ${results.threshold} hours → Hourly Interacting<br>
+          • <strong>${agentNologin}</strong> agents have 0 hours → NOLOGIN (no licence cost)<br>
+          • Plus: <strong>${supervisors}</strong> supervisors + <strong>${admins}</strong> admins = Named (always)<br>
+          • Plus: <strong>${others}</strong> other users (consultants, managers, etc.)
+        </div>
+      `;
+      
+      // Clear previous explanation if any
+      const existingExplanation = el.deltaGrid.querySelector('.delta-explanation');
+      if (existingExplanation) {
+        existingExplanation.remove();
+      }
+      explanation.className = 'delta-explanation';
+      el.deltaGrid.appendChild(explanation);
+
+      // Show the delta breakdown panel
+      el.deltaBreakdown.style.display = 'block';
     }
 
     function updateOverageTable() {
@@ -2173,11 +2298,12 @@
         el.statSupervisorNamed.textContent = supervisorNamed;
         el.statAdminNamed.textContent = adminNamed;
 
-        // Update delta explanation
-        updateDeltaExplanation();
+        // Update delta breakdown
+        updateDeltaBreakdown();
 
         renderUserTable();
         updateHourBuckets();
+        updateAgentCounts();
         updateHourBarChart();
         updateOverageTable();
         createLicenseChart();
@@ -2409,6 +2535,7 @@
         card.title = `Bucket: ${label}\nUsers: ${data.userCount}\nAgents: ${data.agentCount}\nTotal Hours: ${Math.round(data.totalHours)}`;
         card.innerHTML = `
           <div class="bucket-count">${Math.round(data.totalHours)}</div>
+          <div class="bucket-agent-count">👥 ${data.userCount} users</div>
           <div class="bucket-label">${label}</div>
         `;
         el.hourBuckets.appendChild(card);
@@ -2427,6 +2554,91 @@
           <div>Avg per user: <strong>${Math.round(avgHours)}</strong></div>
         </div>
       `;
+    }
+
+    function updateAgentCounts() {
+      const buckets = {
+        '0h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '1-10h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '11-20h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '21-30h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '31-40h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '41-50h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '51-60h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '61-70h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '71-80h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '81-90h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '91-100h': { userCount: 0, agentCount: 0, totalHours: 0 },
+        '100+h': { userCount: 0, agentCount: 0, totalHours: 0 }
+      };
+
+      (appState.userData || []).forEach(user => {
+        const hours = user.interactingHoursDecimal || 0;
+        const isAgent = user.userType === 'agent';
+        
+        if (hours === 0) {
+          buckets['0h'].userCount++;
+          buckets['0h'].totalHours += hours;
+          if (isAgent) buckets['0h'].agentCount++;
+        } else if (hours > 0 && hours <= 10) {
+          buckets['1-10h'].userCount++;
+          buckets['1-10h'].totalHours += hours;
+          if (isAgent) buckets['1-10h'].agentCount++;
+        } else if (hours > 10 && hours <= 20) {
+          buckets['11-20h'].userCount++;
+          buckets['11-20h'].totalHours += hours;
+          if (isAgent) buckets['11-20h'].agentCount++;
+        } else if (hours > 20 && hours <= 30) {
+          buckets['21-30h'].userCount++;
+          buckets['21-30h'].totalHours += hours;
+          if (isAgent) buckets['21-30h'].agentCount++;
+        } else if (hours > 30 && hours <= 40) {
+          buckets['31-40h'].userCount++;
+          buckets['31-40h'].totalHours += hours;
+          if (isAgent) buckets['31-40h'].agentCount++;
+        } else if (hours > 40 && hours <= 50) {
+          buckets['41-50h'].userCount++;
+          buckets['41-50h'].totalHours += hours;
+          if (isAgent) buckets['41-50h'].agentCount++;
+        } else if (hours > 50 && hours <= 60) {
+          buckets['51-60h'].userCount++;
+          buckets['51-60h'].totalHours += hours;
+          if (isAgent) buckets['51-60h'].agentCount++;
+        } else if (hours > 60 && hours <= 70) {
+          buckets['61-70h'].userCount++;
+          buckets['61-70h'].totalHours += hours;
+          if (isAgent) buckets['61-70h'].agentCount++;
+        } else if (hours > 70 && hours <= 80) {
+          buckets['71-80h'].userCount++;
+          buckets['71-80h'].totalHours += hours;
+          if (isAgent) buckets['71-80h'].agentCount++;
+        } else if (hours > 80 && hours <= 90) {
+          buckets['81-90h'].userCount++;
+          buckets['81-90h'].totalHours += hours;
+          if (isAgent) buckets['81-90h'].agentCount++;
+        } else if (hours > 90 && hours <= 100) {
+          buckets['91-100h'].userCount++;
+          buckets['91-100h'].totalHours += hours;
+          if (isAgent) buckets['91-100h'].agentCount++;
+        } else if (hours > 100) {
+          buckets['100+h'].userCount++;
+          buckets['100+h'].totalHours += hours;
+          if (isAgent) buckets['100+h'].agentCount++;
+        }
+      });
+
+      el.agentCounts.innerHTML = '';
+      
+      Object.entries(buckets).forEach(([label, data]) => {
+        const card = document.createElement('div');
+        card.className = 'agent-count-card';
+        card.title = `Bucket: ${label}\nAgent Count: ${data.agentCount}\nTotal Hours: ${Math.round(data.totalHours)}`;
+        card.innerHTML = `
+          <div class="agent-count-value">${data.agentCount}</div>
+          <div class="agent-count-label">${label}</div>
+        `;
+        el.agentCounts.appendChild(card);
+      });
     }
 
     function updateHourBarChart() {
@@ -2680,7 +2892,7 @@
         el.btnRunAnalysis.disabled = true;
         el.btnExport.disabled = true;
 
-        el.deltaExplanation.style.display = 'none';
+        el.deltaBreakdown.style.display = 'none';
 
         el.usersTableBody.innerHTML = `
           <tr><td colspan="8" style="text-align:center;padding:48px;color:var(--text-light);">
