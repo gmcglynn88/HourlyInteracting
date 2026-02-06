@@ -734,7 +734,7 @@
                 <div class="stat-label">Hourly Interacting</div>
                 <div class="stat-value" id="statHiUsers">0</div>
                 <div class="stat-subvalue" id="statHiHours">0 hours</div>
-                <div style="font-size:12px;color:var(--text-light);">Users with &gt;0 hours but &lt; threshold</div>
+                <div style="font-size:12px;color:var(--text-light);">Agents with &gt;0 hours but &lt; threshold</div>
               </div>
             </div>
 
@@ -995,17 +995,17 @@
                 <div class="stat-card">
                   <div class="stat-label">Hourly Users</div>
                   <div class="stat-value" id="statHiUsersDetailed">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Users with &gt;0 but &lt; threshold hours</div>
+                  <div style="font-size:12px;color:var(--text-light);">Agents with >0 but < threshold hours</div>
                 </div>
                 <div class="stat-card">
                   <div class="stat-label">Total Hourly Hours</div>
                   <div class="stat-value" id="statTotalHiHours">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Billable hours</div>
+                  <div style="font-size:12px;color:var(--text-light);">Billable hours (up to threshold)</div>
                 </div>
                 <div class="stat-card">
                   <div class="stat-label">Avg Hours per User</div>
                   <div class="stat-value" id="statAvgHiHours">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Average per Hourly user</div>
+                  <div style="font-size:12px;color:var(--text-light);">Average per Hourly Agent</div>
                 </div>
                 <div class="stat-card">
                   <div class="stat-label">Hourly Cost</div>
@@ -1592,6 +1592,11 @@
 
         updateProgress('Applying business rules...', 50);
         
+        // IMPORTANT: We need to track total hourly hours for cost calculation
+        // Hourly hours should be capped at the threshold for each user
+        let totalHourlyHoursForCost = 0;
+        let hourlyAgentUsers = [];
+        
         usersToAnalyze.forEach(user => {
           const hasNeverLoggedIn = !user.rawLastLogin && user.interactingMilliseconds === 0;
 
@@ -1602,8 +1607,14 @@
             user.recommendedLicense = 'Named';
             user.recommendedReason = `${user.userType === 'admin' ? 'Admin' : 'Supervisor'} role`;
           } else if (user.interactingHoursDecimal > 0 && user.interactingHoursDecimal < threshold) {
+            // This is an hourly interacting agent
             user.recommendedLicense = 'Hourly Interacting';
             user.recommendedReason = `Under ${threshold} hours (${user.interactingHoursDecimal.toFixed(1)}h)`;
+            
+            // For hourly cost calculation, use the actual hours (capped at threshold)
+            user.hourlyBillableHours = user.interactingHoursDecimal; // Already under threshold
+            totalHourlyHoursForCost += user.hourlyBillableHours;
+            hourlyAgentUsers.push(user);
           } else if (user.interactingHoursDecimal >= threshold) {
             user.recommendedLicense = 'Named';
             user.recommendedReason = `Over ${threshold} hours (${user.interactingHoursDecimal.toFixed(1)}h)`;
@@ -1613,7 +1624,7 @@
           }
 
           if (user.recommendedLicense === 'Hourly Interacting') {
-            user.estimatedCost = user.interactingHoursDecimal * hourlyLicenseRate;
+            user.estimatedCost = user.hourlyBillableHours * hourlyLicenseRate;
           } else if (user.recommendedLicense === 'Named') {
             user.estimatedCost = namedLicenseCost;
           } else {
@@ -1625,18 +1636,25 @@
         const totalUsers = usersToAnalyze.length;
         const activeUsers = usersToAnalyze.filter(u => u.interactingMilliseconds > 0).length;
         const namedUsers = usersToAnalyze.filter(u => u.recommendedLicense === 'Named').length;
-        const hiUsers = usersToAnalyze.filter(u => u.recommendedLicense === 'Hourly Interacting').length;
+        
+        // Hourly Interacting users should only be AGENTS with hours >0 and < threshold
+        const hiUsers = usersToAnalyze.filter(u => 
+          u.recommendedLicense === 'Hourly Interacting' && u.userType === 'agent'
+        ).length;
+        
         const nologinUsers = usersToAnalyze.filter(u => u.recommendedLicense === 'NOLOGIN').length;
         const totalHours = usersToAnalyze.reduce((sum, u) => sum + u.interactingHoursDecimal, 0);
 
-        // Calculate Hourly Interacting details
-        const hiUsersList = usersToAnalyze.filter(u => u.recommendedLicense === 'Hourly Interacting');
-        const hiHours = hiUsersList.reduce((sum, u) => sum + u.interactingHoursDecimal, 0);
-        const avgHiHours = hiUsers > 0 ? hiHours / hiUsers : 0;
-        const hourlyCost = hiHours * hourlyLicenseRate;
+        // Calculate Hourly Interacting details - ONLY for AGENTS
+        const hiAgentUsers = usersToAnalyze.filter(u => 
+          u.recommendedLicense === 'Hourly Interacting' && u.userType === 'agent'
+        );
+        const hiHours = hiAgentUsers.reduce((sum, u) => sum + u.interactingHoursDecimal, 0);
+        const avgHiHours = hiAgentUsers.length > 0 ? hiHours / hiAgentUsers.length : 0;
+        const hourlyCost = totalHourlyHoursForCost * hourlyLicenseRate;
 
         const agentNamed = usersToAnalyze.filter(u => u.userType === 'agent' && u.recommendedLicense === 'Named').length;
-        const agentHI = usersToAnalyze.filter(u => u.userType === 'agent' && u.recommendedLicense === 'Hourly Interacting').length;
+        const agentHI = hiAgentUsers.length; // Already filtered to agents
         const supervisorNamed = usersToAnalyze.filter(u => u.userType === 'supervisor' && u.recommendedLicense === 'Named').length;
         const adminNamed = usersToAnalyze.filter(u => u.userType === 'admin' && u.recommendedLicense === 'Named').length;
 
@@ -1671,14 +1689,19 @@
           agentHI,
           supervisorNamed,
           adminNamed,
-          users: usersToAnalyze
+          users: usersToAnalyze,
+          totalHourlyHoursForCost
         };
 
         updateProgress('Updating display...', 90);
         el.statActiveUsers.textContent = activeUsers;
         el.statNamedUsers.textContent = namedUsers;
-        el.statHiUsers.textContent = hiUsers;
-        el.statHiHours.textContent = `${Math.round(hiHours)} hours`;
+        el.statHiUsers.textContent = hiUsers; // This should show AGENT hourly users
+        el.statHiHours.textContent = `${Math.round(hiHours)} hours`; // This should show total hours for AGENT hourly users
+        
+        // Update the label to be clearer
+        document.querySelector('#statHiUsers + .stat-subtitle').textContent = 'Agents with >0 hours but < threshold';
+        
         el.statAgentNamed.textContent = agentNamed;
         el.statAgentHI.textContent = agentHI;
         el.statSupervisorNamed.textContent = supervisorNamed;
@@ -1686,9 +1709,14 @@
         
         // Update Hourly Interacting details
         el.statHiUsersDetailed.textContent = hiUsers;
-        el.statTotalHiHours.textContent = Math.round(hiHours);
-        el.statAvgHiHours.textContent = avgHiHours.toFixed(1);
+        el.statTotalHiHours.textContent = Math.round(totalHourlyHoursForCost); // Billable hours (capped at threshold)
+        el.statAvgHiHours.textContent = hiUsers > 0 ? (totalHourlyHoursForCost / hiUsers).toFixed(1) : '0';
         el.statHourlyCost.textContent = `${appState.hourlyCurrencySymbol}${hourlyCost.toFixed(2)}`;
+        
+        // Update the labels for clarity
+        document.querySelector('#statHiUsersDetailed + div').textContent = 'Agents with >0 but < threshold hours';
+        document.querySelector('#statTotalHiHours + div').textContent = 'Billable hours (up to threshold)';
+        document.querySelector('#statAvgHiHours + div').textContent = 'Average per Hourly Agent';
         
         updateCurrencyDisplay();
         
@@ -1706,11 +1734,11 @@
         createLicenseChart();
         updateProgress('Analysis complete!', 100);
         setTimeout(() => {
-          logMessage('SUCCESS', 'Analysis complete', `${namedUsers} Named, ${hiUsers} Hourly Interacting users (${Math.round(hiHours)} hours)`);
-          logMessage('INFO', 'Hourly Interacting details', `${hiUsers} users with >0 hours, ${Math.round(hiHours)} total hours, ${appState.hourlyCurrencySymbol}${hourlyCost.toFixed(2)} cost`);
+          logMessage('SUCCESS', 'Analysis complete', `${namedUsers} Named, ${hiUsers} Hourly Interacting AGENTS (${Math.round(hiHours)} hours)`);
+          logMessage('INFO', 'Hourly Interacting details', `${hiUsers} AGENTS with >0 hours, ${Math.round(totalHourlyHoursForCost)} billable hours, ${appState.hourlyCurrencySymbol}${hourlyCost.toFixed(2)} cost`);
           logMessage('INFO', 'NOLOGIN users', `${nologinUsers} users with 0 hours (correctly classified)`);
           logMessage('INFO', 'Cost analysis', `All Named: ${appState.currencySymbol}${allNamedCost}, Hybrid: ${appState.currencySymbol}${hybridCost}, Savings: ${savings}%`);
-          showStatusMessage(`✅ Analysis complete: ${hiUsers} Hourly users (with >0 hours), ${savings}% savings`, 'success');
+          showStatusMessage(`✅ Analysis complete: ${hiUsers} Hourly AGENTS, ${savings}% savings`, 'success');
           el.btnExport.disabled = false;
 
           appState.isAnalyzing = false;
@@ -2133,8 +2161,8 @@
       csv += `Total Users,${results.totalUsers}\n`;
       csv += `Active Users,${results.activeUsers}\n`;
       csv += `Named Users,${results.namedUsers}\n`;
-      csv += `Hourly Interacting Users,${results.hiUsers}\n`;
-      csv += `Hourly Interacting Hours,${Math.round(results.hiHours)}\n`;
+      csv += `Hourly Interacting AGENTS,${results.hiUsers}\n`;
+      csv += `Hourly Interacting Hours (Billable),${Math.round(results.totalHourlyHoursForCost)}\n`;
       csv += `Hourly Interacting Cost,${appState.hourlyCurrencySymbol}${results.hourlyCost.toFixed(2)}\n`;
       csv += `NOLOGIN Users,${results.nologinUsers}\n`;
       csv += `Total Hours,${Math.round(results.totalHours)}\n`;
@@ -2145,9 +2173,9 @@
 
       csv += 'HOURLY INTERACTING DETAILS\n';
       csv += 'Metric,Value\n';
-      csv += `Hourly Users,${results.hiUsers}\n`;
-      csv += `Total Hourly Hours,${Math.round(results.hiHours)}\n`;
-      csv += `Average Hours per User,${results.avgHiHours.toFixed(1)}\n`;
+      csv += `Hourly AGENTS,${results.hiUsers}\n`;
+      csv += `Total Billable Hours,${Math.round(results.totalHourlyHoursForCost)}\n`;
+      csv += `Average Hours per Agent,${results.avgHiHours.toFixed(1)}\n`;
       csv += `Hourly Cost,${appState.hourlyCurrencySymbol}${results.hourlyCost.toFixed(2)}\n\n`;
 
       csv += 'ROLE-BASED ANALYSIS\n';
@@ -2158,10 +2186,10 @@
       csv += `Admin,Named Users,${results.adminNamed}\n\n`;
 
       csv += 'USER DETAILS\n';
-      csv += 'Name,Email,Team,Role Type,Roles,Last Login,Interacting Time (HH:MM:SS),Interacting Time (hours),Recommended Licence,Reason,Estimated Cost\n';
+      csv += 'Name,Email,Team,Role Type,Roles,Last Login,Interacting Time (HH:MM:SS),Interacting Time (hours),Recommended Licence,Reason,Estimated Cost,Billable Hours\n';
 
       results.users.forEach(user => {
-        csv += `"${user.name || ''}","${user.email || ''}","${user.team || ''}","${user.userType || ''}","${user.role || ''}","${user.lastLogin || 'Never'}","${user.interactingHoursFormatted}",${Math.round(user.interactingHoursDecimal)},"${user.recommendedLicense || ''}","${user.recommendedReason || ''}",${(user.estimatedCost || 0).toFixed(2)}\n`;
+        csv += `"${user.name || ''}","${user.email || ''}","${user.team || ''}","${user.userType || ''}","${user.role || ''}","${user.lastLogin || 'Never'}","${user.interactingHoursFormatted}",${Math.round(user.interactingHoursDecimal)},"${user.recommendedLicense || ''}","${user.recommendedReason || ''}",${(user.estimatedCost || 0).toFixed(2)},${(user.hourlyBillableHours || 0).toFixed(2)}\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
