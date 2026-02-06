@@ -31,6 +31,23 @@
       border-left:5px solid var(--primary-color);border:1px solid var(--border-color);
       margin-top:20px;
       position:relative;
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      flex-wrap:wrap;
+      gap:20px;
+    }
+
+    .header-content{
+      flex:1;
+      min-width:300px;
+    }
+
+    .header-actions{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-top:8px;
     }
 
     h1{color:var(--text-color);margin-bottom:12px;font-size:32px;font-weight:600;}
@@ -771,6 +788,79 @@
         padding: 20px;
       }
     }
+
+    /* Updated header button styles */
+    .header-actions button {
+      padding: 12px 24px;
+      white-space: nowrap;
+    }
+
+    /* Explanation panel for delta */
+    .explanation-panel {
+      background: rgba(99, 171, 143, 0.05);
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      border: 1px solid rgba(99, 171, 143, 0.2);
+    }
+
+    .explanation-title {
+      color: var(--primary-color);
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .explanation-list {
+      list-style-type: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .explanation-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(99, 171, 143, 0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .explanation-list li:last-child {
+      border-bottom: none;
+    }
+
+    .explanation-icon {
+      font-size: 18px;
+    }
+
+    .user-breakdown-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .user-breakdown-card {
+      background: white;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid var(--border-color);
+    }
+
+    .breakdown-value {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin: 8px 0;
+    }
+
+    .breakdown-label {
+      font-size: 12px;
+      color: var(--text-light);
+    }
   </style>
 </head>
 <body>
@@ -779,8 +869,15 @@
   <div id="mainContent">
     <div class="container">
       <header>
-        <h1>📊 Genesys Cloud - Hourly Billing Calculator (Offline Demo)</h1>
-        <div class="subtitle">Demo mode with 100 dummy users - No internet connection required</div>
+        <div class="header-content">
+          <h1>📊 Genesys Cloud - Hourly Billing Calculator (Offline Demo)</h1>
+          <div class="subtitle">Demo mode with 100 dummy users - No internet connection required</div>
+        </div>
+        <div class="header-actions">
+          <button id="btnRunAnalysis" class="btn run-analysis-button" disabled>
+            <span>▶️ Run Analysis</span>
+          </button>
+        </div>
       </header>
 
       <div class="main-grid">
@@ -914,7 +1011,7 @@
           </div>
 
           <div id="tab-dashboard" class="tab-content active">
-            <!-- Dashboard Header with Run Analysis Button -->
+            <!-- Dashboard Header - Simplified since button moved to header -->
             <div class="dashboard-header">
               <div class="dashboard-title">
                 <h2 style="margin:0;color:var(--primary-color);">Current Analysis Dashboard</h2>
@@ -922,9 +1019,6 @@
                   Real-time insights and recommendations based on your data
                 </p>
               </div>
-              <button id="btnRunAnalysis" class="btn run-analysis-button" disabled>
-                <span>▶️ Run Analysis</span>
-              </button>
             </div>
 
             <!-- Today's Situation Section -->
@@ -1038,6 +1132,31 @@
                   <div style="font-size:12px;color:var(--text-light);">Hourly licence cost</div>
                 </div>
               </div>
+
+              <!-- Delta Explanation -->
+              <div class="explanation-panel" id="deltaExplanation" style="display:none;">
+                <div class="explanation-title">
+                  <span>📊</span> User Breakdown Explanation
+                </div>
+                <p style="font-size:14px;color:var(--text-color);margin-bottom:16px;">
+                  Your 100 agents are distributed across licence types as follows:
+                </p>
+                <div class="user-breakdown-grid" id="userBreakdown"></div>
+                <ul class="explanation-list">
+                  <li>
+                    <span class="explanation-icon">👑</span>
+                    <span><strong>Named Users:</strong> Supervisors + Admins + Agents over threshold</span>
+                  </li>
+                  <li>
+                    <span class="explanation-icon">⏱️</span>
+                    <span><strong>Hourly Interacting:</strong> Only Agents with hours >0 but < threshold</span>
+                  </li>
+                  <li>
+                    <span class="explanation-icon">🚫</span>
+                    <span><strong>NOLOGIN:</strong> Agents with 0 hours (no licence consumption)</span>
+                  </li>
+                </ul>
+              </div>
             </div>
 
             <!-- Hour Distribution Section -->
@@ -1051,9 +1170,6 @@
                 <div>
                   <h3 class="section-title">📊 Total Hours per Bucket</h3>
                   <div class="bucket-container" id="hourBuckets"></div>
-                  
-                  <h3 class="section-title">👥 Agent Count per Bucket</h3>
-                  <div class="agent-count-container" id="agentCounts"></div>
                   
                   <div style="margin-top:18px;font-size:13px;color:var(--text-light);text-align:center;">
                     <div>📊 <strong>Total Users: <span id="totalUsersCount">0</span></strong> | 👥 <strong>Agents: <span id="totalAgentsCount">0</span></strong></div>
@@ -1451,7 +1567,9 @@
       currentCost: document.getElementById('currentCost'),
       recommendedCost: document.getElementById('recommendedCost'),
       savingsPercentage: document.getElementById('savingsPercentage'),
-      allNamedCount: document.getElementById('allNamedCount')
+      allNamedCount: document.getElementById('allNamedCount'),
+      deltaExplanation: document.getElementById('deltaExplanation'),
+      userBreakdown: document.getElementById('userBreakdown')
     };
 
     // ==================== UTILITY FUNCTIONS ====================
@@ -1740,6 +1858,42 @@
       el.statOthers.textContent = others;
     }
 
+    function updateDeltaExplanation() {
+      if (!appState.analysisResults) {
+        el.deltaExplanation.style.display = 'none';
+        return;
+      }
+
+      const results = appState.analysisResults;
+      const totalAgents = appState.userData.filter(u => u.userType === 'agent').length;
+      const agentNamed = results.agentNamed || 0;
+      const agentHI = results.agentHI || 0;
+      const agentNologin = totalAgents - agentNamed - agentHI;
+
+      // Update the breakdown display
+      el.userBreakdown.innerHTML = `
+        <div class="user-breakdown-card">
+          <div class="breakdown-value" style="color:var(--primary-color);">${agentNamed}</div>
+          <div class="breakdown-label">Agents → Named</div>
+        </div>
+        <div class="user-breakdown-card">
+          <div class="breakdown-value" style="color:var(--success);">${agentHI}</div>
+          <div class="breakdown-label">Agents → Hourly</div>
+        </div>
+        <div class="user-breakdown-card">
+          <div class="breakdown-value" style="color:var(--text-light);">${agentNologin}</div>
+          <div class="breakdown-label">Agents → NOLOGIN</div>
+        </div>
+        <div class="user-breakdown-card">
+          <div class="breakdown-value" style="color:var(--primary-color);">${totalAgents}</div>
+          <div class="breakdown-label">Total Agents</div>
+        </div>
+      `;
+
+      // Show the explanation panel
+      el.deltaExplanation.style.display = 'block';
+    }
+
     function updateOverageTable() {
       const tbody = el.overageTableBody;
       tbody.innerHTML = '';
@@ -1866,9 +2020,6 @@
       el.btnRunAnalysis.disabled = true;
       el.btnRunAnalysis.innerHTML = '<span>⏳ Analysing...</span>';
       
-      // Remove progress bar since we removed the tile
-      // updateProgress('Starting analysis...', 10);
-
       try {
         const threshold = parseFloat(el.thresholdHours.value);
         const namedLicenseCost = parseFloat(el.namedLicenseCost.value);
@@ -2021,6 +2172,9 @@
         el.statAgentHI.textContent = agentHI;
         el.statSupervisorNamed.textContent = supervisorNamed;
         el.statAdminNamed.textContent = adminNamed;
+
+        // Update delta explanation
+        updateDeltaExplanation();
 
         renderUserTable();
         updateHourBuckets();
@@ -2255,23 +2409,9 @@
         card.title = `Bucket: ${label}\nUsers: ${data.userCount}\nAgents: ${data.agentCount}\nTotal Hours: ${Math.round(data.totalHours)}`;
         card.innerHTML = `
           <div class="bucket-count">${Math.round(data.totalHours)}</div>
-          <div class="bucket-agent-count">👥 ${data.userCount} users</div>
           <div class="bucket-label">${label}</div>
         `;
         el.hourBuckets.appendChild(card);
-      });
-
-      el.agentCounts.innerHTML = '';
-      
-      Object.entries(buckets).forEach(([label, data]) => {
-        const card = document.createElement('div');
-        card.className = 'agent-count-card';
-        card.title = `Bucket: ${label}\nAgent Count: ${data.agentCount}\nTotal Hours: ${Math.round(data.totalHours)}`;
-        card.innerHTML = `
-          <div class="agent-count-value">${data.agentCount}</div>
-          <div class="agent-count-label">${label}</div>
-        `;
-        el.agentCounts.appendChild(card);
       });
 
       el.totalUsersCount.textContent = totalUsers;
@@ -2539,6 +2679,8 @@
         el.btnAnalyze.disabled = true;
         el.btnRunAnalysis.disabled = true;
         el.btnExport.disabled = true;
+
+        el.deltaExplanation.style.display = 'none';
 
         el.usersTableBody.innerHTML = `
           <tr><td colspan="8" style="text-align:center;padding:48px;color:var(--text-light);">
