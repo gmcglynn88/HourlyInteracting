@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Genesys Cloud - Hourly Interacting Calculator (Offline Demo)</title>
+  <title>Genesys Cloud - Hourly Billing Calculator (Offline Demo)</title>
   <style>
     :root{
       --primary-color:#63AB8F; --secondary-color:#4A8C7D; --border-color:#DEE2E6;
@@ -30,7 +30,6 @@
       margin-bottom:28px;box-shadow:0 2px 8px rgba(0,0,0,.08);
       border-left:5px solid var(--primary-color);border:1px solid var(--border-color);
       margin-top:20px;
-      position:relative;
     }
 
     h1{color:var(--text-color);margin-bottom:12px;font-size:32px;font-weight:600;}
@@ -253,14 +252,13 @@
     .hour-bar-chart {
       display: flex;
       align-items: flex-end;
-      height: 280px;
-      gap: 4px;
+      height: 240px;
+      gap: 6px;
       margin-top: 24px;
-      padding: 24px 16px 48px 16px;
+      padding: 16px;
       background: var(--light-bg);
       border-radius: 10px;
       border: 1px solid var(--border-color);
-      position: relative;
     }
 
     .hour-bar {
@@ -270,7 +268,6 @@
       min-height: 4px;
       position: relative;
       transition: all 0.3s ease;
-      cursor: pointer;
     }
 
     .hour-bar:hover {
@@ -286,9 +283,9 @@
       text-align: center;
       font-size: 12px;
       color: var(--text-light);
-      white-space: nowrap;
       transform: rotate(-45deg);
       transform-origin: left top;
+      white-space: nowrap;
     }
 
     .hour-bar-value {
@@ -297,7 +294,7 @@
       left: 0;
       right: 0;
       text-align: center;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 600;
       color: var(--text-color);
     }
@@ -432,7 +429,7 @@
       font-size: 15px;
     }
 
-    /* FIXED: Date range styles - stacked always */
+    /* FIXED: Date range styles - stacked on mobile, side-by-side on desktop */
     .date-range-simple {
       display: flex;
       flex-direction: column;
@@ -468,6 +465,17 @@
       outline: none;
       border-color: var(--primary-color);
       box-shadow: 0 0 0 3px rgba(99, 171, 143, 0.1);
+    }
+    
+    @media (min-width: 768px) {
+      .date-range-simple {
+        flex-direction: row;
+        gap: 16px;
+      }
+      
+      .date-field-simple {
+        flex: 1;
+      }
     }
 
     /* Improved layout for better screen usage */
@@ -563,286 +571,6 @@
       color: var(--text-light);
       margin-top: 4px;
     }
-
-    /* New styles for dashboard layout */
-    .dashboard-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 24px;
-    }
-    
-    .dashboard-title {
-      flex: 1;
-    }
-    
-    .run-analysis-button {
-      margin-top: 8px;
-      padding: 12px 28px;
-      font-size: 16px;
-      font-weight: 600;
-    }
-    
-    .today-section {
-      background: linear-gradient(135deg, rgba(99, 171, 143, 0.05) 0%, rgba(74, 140, 125, 0.05) 100%);
-      border-radius: 14px;
-      padding: 32px;
-      margin-bottom: 32px;
-      border: 2px solid rgba(99, 171, 143, 0.2);
-    }
-    
-    .today-section h2 {
-      color: var(--primary-color);
-      font-size: 24px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .today-section h2:before {
-      content: "📊";
-      font-size: 28px;
-    }
-    
-    .recommendation-section {
-      background: linear-gradient(135deg, rgba(40, 167, 69, 0.05) 0%, rgba(33, 136, 56, 0.05) 100%);
-      border-radius: 14px;
-      padding: 32px;
-      margin-bottom: 32px;
-      border: 2px solid rgba(40, 167, 69, 0.2);
-    }
-    
-    .recommendation-section h2 {
-      color: var(--success);
-      font-size: 24px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .recommendation-section h2:before {
-      content: "🎯";
-      font-size: 28px;
-    }
-    
-    .hour-distribution-section {
-      background: linear-gradient(135deg, rgba(23, 162, 184, 0.05) 0%, rgba(19, 132, 150, 0.05) 100%);
-      border-radius: 14px;
-      padding: 32px;
-      margin-bottom: 32px;
-      border: 2px solid rgba(23, 162, 184, 0.2);
-    }
-    
-    .hour-distribution-section h2 {
-      color: var(--info);
-      font-size: 24px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .hour-distribution-section h2:before {
-      content: "⏱️";
-      font-size: 28px;
-    }
-    
-    .visualization-section {
-      background: linear-gradient(135deg, rgba(108, 117, 125, 0.05) 0%, rgba(73, 80, 87, 0.05) 100%);
-      border-radius: 14px;
-      padding: 32px;
-      border: 2px solid rgba(108, 117, 125, 0.2);
-    }
-    
-    .visualization-section h2 {
-      color: var(--text-light);
-      font-size: 24px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-    
-    .visualization-section h2:before {
-      content: "📈";
-      font-size: 28px;
-    }
-    
-    /* Chart axis label fixes */
-    .chart-axis-container {
-      position: relative;
-      padding-bottom: 40px;
-    }
-    
-    .chart-legend {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 16px;
-      font-size: 12px;
-      color: var(--text-light);
-    }
-    
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    .legend-color {
-      width: 12px;
-      height: 12px;
-      border-radius: 2px;
-    }
-    
-    /* Section dividers */
-    .section-divider {
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-      margin: 32px 0;
-      border-radius: 1px;
-    }
-    
-    /* Today vs Recommendation comparison */
-    .comparison-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-      margin-top: 24px;
-    }
-    
-    .comparison-card {
-      background: white;
-      border-radius: 12px;
-      padding: 24px;
-      border: 1px solid var(--border-color);
-      text-align: center;
-    }
-    
-    .comparison-card.today {
-      border-top: 4px solid var(--primary-color);
-    }
-    
-    .comparison-card.recommended {
-      border-top: 4px solid var(--success);
-    }
-    
-    .comparison-value {
-      font-size: 42px;
-      font-weight: 700;
-      margin: 16px 0;
-      font-family:'Aptos','Segoe UI',system-ui,-apple-system,Arial,sans-serif;
-    }
-    
-    .today-value {
-      color: var(--primary-color);
-    }
-    
-    .recommended-value {
-      color: var(--success);
-    }
-    
-    .comparison-label {
-      font-size: 14px;
-      color: var(--text-light);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      font-weight: 600;
-    }
-    
-    /* Mobile adjustments */
-    @media (max-width: 768px) {
-      .dashboard-header {
-        flex-direction: column;
-        gap: 16px;
-      }
-      
-      .run-analysis-button {
-        width: 100%;
-        margin-top: 0;
-      }
-      
-      .today-section,
-      .recommendation-section,
-      .hour-distribution-section,
-      .visualization-section {
-        padding: 20px;
-      }
-    }
-    
-    /* NEW: Header with integrated run analysis button */
-    .header-container {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      position: relative;
-    }
-    
-    .header-content {
-      flex: 1;
-    }
-    
-    .header-analysis-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 10px 20px;
-      font-size: 14px;
-      background: var(--success);
-    }
-    
-    .header-analysis-button:hover {
-      background: #218838;
-    }
-    
-    /* NEW: Delta explanation styling */
-    .delta-explanation {
-      background: rgba(255, 193, 7, 0.1);
-      border-radius: 10px;
-      padding: 20px;
-      margin-top: 20px;
-      border: 1px solid rgba(255, 193, 7, 0.3);
-    }
-    
-    .delta-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-top: 16px;
-    }
-    
-    .delta-card {
-      background: white;
-      border-radius: 8px;
-      padding: 16px;
-      text-align: center;
-      border: 1px solid var(--border-color);
-    }
-    
-    .delta-value {
-      font-size: 24px;
-      font-weight: 700;
-      color: var(--warning);
-      margin-bottom: 8px;
-    }
-    
-    .delta-label {
-      font-size: 13px;
-      color: var(--text-light);
-    }
-    
-    /* NEW: Remove cost from dashboard */
-    .cost-removed {
-      color: var(--text-light);
-      font-style: italic;
-      text-align: center;
-      padding: 20px;
-      background: rgba(108, 117, 125, 0.05);
-      border-radius: 8px;
-      margin-top: 16px;
-    }
   </style>
 </head>
 <body>
@@ -851,15 +579,8 @@
   <div id="mainContent">
     <div class="container">
       <header>
-        <div class="header-container">
-          <div class="header-content">
-            <h1>📊 Genesys Cloud - Hourly Billing Calculator (Offline Demo)</h1>
-            <div class="subtitle">Demo mode with 100 dummy users - No internet connection required</div>
-          </div>
-          <button id="btnRunAnalysis" class="btn header-analysis-button" disabled>
-            <span>▶️ Run Analysis</span>
-          </button>
-        </div>
+        <h1>📊 Genesys Cloud - Hourly Billing Calculator (Offline Demo)</h1>
+        <div class="subtitle">Demo mode with 100 dummy users - No internet connection required</div>
       </header>
 
       <div class="main-grid">
@@ -888,7 +609,7 @@
             </div>
           </div>
 
-          <!-- Date Range Card - Stacked layout -->
+          <!-- Simplified Date Range Card -->
           <div class="card">
             <h2>📅 Analysis Period</h2>
             
@@ -993,50 +714,33 @@
           </div>
 
           <div id="tab-dashboard" class="tab-content active">
-            <!-- Dashboard Header - Simplified without Run Analysis button -->
-            <div class="dashboard-header">
-              <div class="dashboard-title">
-                <h2 style="margin:0;color:var(--primary-color);">Current Analysis Dashboard</h2>
-                <p style="color:var(--text-light);margin-top:8px;font-size:15px;">
-                  Real-time insights and recommendations based on your data
-                </p>
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-label">Total Users</div>
+                <div class="stat-value" id="statTotalUsers">0</div>
+                <div style="font-size:12px;color:var(--text-light);">Setup in org</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Active Users</div>
+                <div class="stat-value" id="statActiveUsers">0</div>
+                <div style="font-size:12px;color:var(--text-light);">Logged in period</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Named Users</div>
+                <div class="stat-value" id="statNamedUsers">0</div>
+                <div style="font-size:12px;color:var(--text-light);">Recommended</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Hourly Interacting</div>
+                <div class="stat-value" id="statHiUsers">0</div>
+                <div class="stat-subvalue" id="statHiHours">0 hours</div>
+                <div style="font-size:12px;color:var(--text-light);">Users with &gt;0 hours but &lt; threshold</div>
               </div>
             </div>
 
-            <!-- Today's Situation Section -->
-            <div class="today-section">
-              <h2>Today's Situation</h2>
-              <p style="color:var(--text-light);margin-bottom:24px;font-size:15px;">
-                Current state of your organization based on selected date range
-              </p>
-              
-              <div class="stats-grid">
-                <div class="stat-card">
-                  <div class="stat-label">Total Users</div>
-                  <div class="stat-value" id="statTotalUsers">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Setup in organization</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-label">Active Users</div>
-                  <div class="stat-value" id="statActiveUsers">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Logged in period</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-label">Total Hours</div>
-                  <div class="stat-value" id="statTotalHours">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Interacting time</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-label">Avg Hours/User</div>
-                  <div class="stat-value" id="statAvgHours">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Average per active user</div>
-                </div>
-              </div>
-              
-              <div class="section-divider"></div>
-              
-              <h3 class="section-title">User Type Distribution</h3>
-              <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-top:16px;">
+            <div class="card" style="margin-top:24px;">
+              <h2>👥 User Type Distribution</h2>
+              <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
                 <div class="stat-card">
                   <div class="stat-label">Agents</div>
                   <div class="stat-value" id="statAgents">0</div>
@@ -1060,111 +764,8 @@
               </div>
             </div>
 
-            <!-- Recommendation Section -->
-            <div class="recommendation-section">
-              <h2>Optimization Recommendation</h2>
-              <p style="color:var(--text-light);margin-bottom:24px;font-size:15px;">
-                Based on your data and business rules, here's the optimal licensing strategy
-              </p>
-              
-              <!-- Delta Explanation -->
-              <div class="delta-explanation">
-                <div style="font-weight:600;color:var(--warning);margin-bottom:12px;display:flex;align-items:center;gap:8px;">
-                  <span>⚠️</span> Agent Distribution Explanation
-                </div>
-                <p style="margin-bottom:16px;font-size:14px;color:var(--text-color);">
-                  When you have 100 agents total, the breakdown shows where each agent is allocated. The "delta" represents agents who don't fit the hourly criteria (0 hours or over threshold).
-                </p>
-                
-                <div class="delta-grid">
-                  <div class="delta-card">
-                    <div class="delta-value" id="deltaHourlyAgents">0</div>
-                    <div class="delta-label">Hourly Interacting Agents</div>
-                    <div style="font-size:11px;color:var(--text-light);margin-top:4px;">&gt;0 but &lt; threshold hours</div>
-                  </div>
-                  <div class="delta-card">
-                    <div class="delta-value" id="deltaNamedAgents">0</div>
-                    <div class="delta-label">Named Agents</div>
-                    <div style="font-size:11px;color:var(--text-light);margin-top:4px;">Over threshold hours</div>
-                  </div>
-                  <div class="delta-card">
-                    <div class="delta-value" id="deltaNonAgent">0</div>
-                    <div class="delta-label">Non-Agent Named</div>
-                    <div style="font-size:11px;color:var(--text-light);margin-top:4px;">Admins & Supervisors</div>
-                  </div>
-                  <div class="delta-card">
-                    <div class="delta-value" id="deltaNologin">0</div>
-                    <div class="delta-label">NOLOGIN Agents</div>
-                    <div style="font-size:11px;color:var(--text-light);margin-top:4px;">0 hours (inactive)</div>
-                  </div>
-                </div>
-                
-                <div style="margin-top:16px;font-size:13px;color:var(--text-light);padding:12px;background:rgba(255,255,255,0.7);border-radius:6px;">
-                  <strong>Formula:</strong> Total Agents (100) = Hourly + Named Agents + NOLOGIN Agents<br>
-                  <strong>Total Named:</strong> Named Agents + Non-Agent Named (Admins/Supervisors)
-                </div>
-              </div>
-              
-              <div class="comparison-grid" style="margin-top:24px;">
-                <div class="comparison-card today">
-                  <div class="comparison-label">Current State</div>
-                  <div class="comparison-value today-value" style="color:var(--text-light);font-size:36px;">All Named</div>
-                  <div style="font-size:14px;color:var(--text-light);">All users on Named licences</div>
-                  <div style="margin-top:16px;">
-                    <div style="font-size:13px;color:var(--text-light);">Total Named Users</div>
-                    <div style="font-size:18px;font-weight:600;color:var(--text-color);margin-top:4px;" id="allNamedCount">0</div>
-                  </div>
-                </div>
-                
-                <div class="comparison-card recommended">
-                  <div class="comparison-label">Recommended</div>
-                  <div class="comparison-value recommended-value" style="color:var(--success);font-size:36px;" id="licenseModel">Hybrid</div>
-                  <div style="font-size:14px;color:var(--text-light);">Optimal mix of Named & Hourly</div>
-                  <div style="margin-top:16px;">
-                    <div style="font-size:13px;color:var(--text-light);">Savings Potential</div>
-                    <div style="font-size:18px;font-weight:600;color:var(--success);margin-top:4px;" id="savingsPercentage">0%</div>
-                  </div>
-                </div>
-              </div>
-              
-              <div class="section-divider"></div>
-              
-              <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));margin-top:24px;">
-                <div class="stat-card">
-                  <div class="stat-label">Named Users</div>
-                  <div class="stat-value" id="statNamedUsers">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Recommended Named</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-label">Hourly Interacting</div>
-                  <div class="stat-value" id="statHiUsers">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Agents with &gt;0 but &lt; threshold</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-label">NOLOGIN Users</div>
-                  <div class="stat-value" id="statNologinUsers">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">0 hours (no licence)</div>
-                </div>
-                <div class="stat-card">
-                  <div class="stat-label">Optimal Model</div>
-                  <div class="stat-value" style="font-size:28px;" id="licenseModelName">Hybrid</div>
-                  <div style="font-size:12px;color:var(--text-light);">Based on analysis</div>
-                </div>
-              </div>
-              
-              <!-- Cost information removed from dashboard -->
-              <div class="cost-removed">
-                💰 Cost analysis available in the <strong>Analysis tab</strong> after running analysis
-              </div>
-            </div>
-
-            <!-- Hour Distribution Section -->
-            <div class="hour-distribution-section">
-              <h2>Hour Distribution Analysis</h2>
-              <p style="color:var(--text-light);margin-bottom:24px;font-size:15px;">
-                Breakdown of interacting hours across your user base
-              </p>
-              
+            <div class="card" style="margin-top:24px;">
+              <h2>⏱️ Hour Distribution</h2>
               <div class="hour-distribution-container">
                 <div>
                   <h3 class="section-title">📊 Total Hours per Bucket</h3>
@@ -1182,29 +783,32 @@
               <div id="hourStats" style="margin-top:18px;font-size:13px;color:var(--text-light);text-align:center;"></div>
             </div>
 
-            <!-- Visualization Section -->
-            <div class="visualization-section">
-              <h2>Hour Distribution Visualization</h2>
+            <div class="card chart-section">
+              <h2>📊 Hour Distribution Chart</h2>
               <p style="color:var(--text-light);font-size:15px;margin-bottom:24px;">
                 Visual representation of user count by hour bucket range
               </p>
-              
-              <div class="chart-axis-container">
-                <div class="hour-bar-chart" id="hourBarChart"></div>
-                <div class="chart-legend">
-                  <div class="legend-item">
-                    <div class="legend-color" style="background-color:var(--primary-color);"></div>
-                    <span>Total Hours</span>
-                  </div>
-                  <div class="legend-item">
-                    <div class="legend-color" style="background-color:var(--secondary-color);"></div>
-                    <span>On Hover</span>
-                  </div>
+              <div class="hour-bar-chart" id="hourBarChart"></div>
+              <div style="margin-top:18px;font-size:13px;color:var(--text-light);text-align:center;">
+                <div>Hover over bars to see detailed breakdown</div>
+              </div>
+            </div>
+
+            <div class="card" style="margin-top:24px;">
+              <h2>📈 Analysis Progress</h2>
+              <div class="progress-container">
+                <div class="progress-text">
+                  <span id="progressLabel">Ready to analyse</span>
+                  <span id="progressPercent">0%</span>
+                </div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progressFill"></div>
                 </div>
               </div>
-              
-              <div style="margin-top:18px;font-size:13px;color:var(--text-light);text-align:center;">
-                <div>Hover over bars to see detailed breakdown of users and agents in each bucket</div>
+              <div style="text-align:center;margin-top:18px;">
+                <button id="btnRunAnalysis" class="btn" style="width:220px;" disabled>
+                  <span>▶️ Run Analysis</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1328,7 +932,7 @@
               <div class="card">
                 <h3 style="margin:0 0 18px;">📋 Recommendation</h3>
                 <div style="text-align:center;padding:24px;">
-                  <div style="font-size:28px;font-weight:700;color:var(--primary-color);margin:12px 0;" id="licenseModelDetailed">Hybrid</div>
+                  <div style="font-size:28px;font-weight:700;color:var(--primary-color);margin:12px 0;" id="licenseModel">Hybrid</div>
                   <div style="font-size:15px;color:var(--text-light);">Optimal Model</div>
                   <div style="margin-top:18px;font-size:13px;color:var(--text-light);">
                     Based on hour distribution and business rules
@@ -1378,7 +982,7 @@
                 </div>
                 <div class="stat-card">
                   <div class="stat-label">Total Interacting Hours</div>
-                  <div class="stat-value" id="statTotalHoursDetailed">0</div>
+                  <div class="stat-value" id="statTotalHours">0</div>
                   <div style="font-size:12px;color:var(--text-light);">In selected period</div>
                 </div>
               </div>
@@ -1391,21 +995,21 @@
                 <div class="stat-card">
                   <div class="stat-label">Hourly Users</div>
                   <div class="stat-value" id="statHiUsersDetailed">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Agents with >0 but < threshold hours</div>
+                  <div style="font-size:12px;color:var(--text-light);">Users with &gt;0 but &lt; threshold hours</div>
                 </div>
                 <div class="stat-card">
                   <div class="stat-label">Total Hourly Hours</div>
                   <div class="stat-value" id="statTotalHiHours">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Billable hours (up to threshold)</div>
+                  <div style="font-size:12px;color:var(--text-light);">Billable hours</div>
                 </div>
                 <div class="stat-card">
                   <div class="stat-label">Avg Hours per User</div>
                   <div class="stat-value" id="statAvgHiHours">0</div>
-                  <div style="font-size:12px;color:var(--text-light);">Average per Hourly Agent</div>
+                  <div style="font-size:12px;color:var(--text-light);">Average per Hourly user</div>
                 </div>
                 <div class="stat-card">
                   <div class="stat-label">Hourly Cost</div>
-                  <div class="stat-value" id="statHourlyCostDetailed">£0</div>
+                  <div class="stat-value" id="statHourlyCost">£0</div>
                   <div style="font-size:12px;color:var(--text-light);">Hourly licence cost</div>
                 </div>
               </div>
@@ -1512,6 +1116,7 @@
       statActiveUsers: document.getElementById('statActiveUsers'),
       statNamedUsers: document.getElementById('statNamedUsers'),
       statHiUsers: document.getElementById('statHiUsers'),
+      statHiHours: document.getElementById('statHiHours'),
       statAgents: document.getElementById('statAgents'),
       statSupervisors: document.getElementById('statSupervisors'),
       statAdmins: document.getElementById('statAdmins'),
@@ -1523,12 +1128,10 @@
       statNamedCost: document.getElementById('statNamedCost'),
       statHourlyRate: document.getElementById('statHourlyRate'),
       statTotalHours: document.getElementById('statTotalHours'),
-      statAvgHours: document.getElementById('statAvgHours'),
       totalCost: document.getElementById('totalCost'),
       savings: document.getElementById('savings'),
       costDetails: document.getElementById('costDetails'),
       licenseModel: document.getElementById('licenseModel'),
-      licenseModelDetailed: document.getElementById('licenseModelDetailed'),
       hourStats: document.getElementById('hourStats'),
       usersTableBody: document.getElementById('usersTableBody'),
       userSearch: document.getElementById('userSearch'),
@@ -1562,17 +1165,7 @@
       statHiUsersDetailed: document.getElementById('statHiUsersDetailed'),
       statTotalHiHours: document.getElementById('statTotalHiHours'),
       statAvgHiHours: document.getElementById('statAvgHiHours'),
-      statHourlyCost: document.getElementById('statHourlyCost'),
-      statHourlyCostDetailed: document.getElementById('statHourlyCostDetailed'),
-      statTotalHoursDetailed: document.getElementById('statTotalHoursDetailed'),
-      statNologinUsers: document.getElementById('statNologinUsers'),
-      allNamedCount: document.getElementById('allNamedCount'),
-      savingsPercentage: document.getElementById('savingsPercentage'),
-      licenseModelName: document.getElementById('licenseModelName'),
-      deltaHourlyAgents: document.getElementById('deltaHourlyAgents'),
-      deltaNamedAgents: document.getElementById('deltaNamedAgents'),
-      deltaNonAgent: document.getElementById('deltaNonAgent'),
-      deltaNologin: document.getElementById('deltaNologin')
+      statHourlyCost: document.getElementById('statHourlyCost')
     };
 
     // ==================== UTILITY FUNCTIONS ====================
@@ -1812,21 +1405,15 @@
         const usersWithHours = appState.userData.filter(u => u.interactingMilliseconds > 0);
         const totalInteractingMs = usersWithHours.reduce((sum, u) => sum + u.interactingMilliseconds, 0);
         const totalInteractingHours = formatMillisecondsToDecimalHours(totalInteractingMs);
-        const avgHours = usersWithHours.length > 0 ? totalInteractingHours / usersWithHours.length : 0;
         
         updateLoadingProgress(80);
         updateUserTypeStats();
         updateCurrencyDisplay();
 
-        // Update dashboard stats
-        el.statTotalUsers.textContent = appState.userData.length;
-        el.statActiveUsers.textContent = usersWithHours.length;
-        el.statTotalHours.textContent = Math.round(totalInteractingHours);
-        el.statAvgHours.textContent = avgHours.toFixed(1);
-        
         logMessage('SUCCESS', 'Demo data loaded successfully', 
           `${appState.userData.length} users generated, ${usersWithHours.length} with interacting time, total ${totalInteractingHours.toFixed(2)} hours`);
 
+        el.statTotalUsers.textContent = appState.userData.length;
         el.totalCount.textContent = appState.userData.length;
         el.visibleCount.textContent = appState.userData.length;
         el.btnAnalyze.disabled = false;
@@ -1986,14 +1573,14 @@
       appState.isAnalyzing = true;
       el.btnRunAnalysis.disabled = true;
       el.btnRunAnalysis.innerHTML = '<span>⏳ Analysing...</span>';
-      el.btnAnalyze.disabled = true;
-      el.btnAnalyze.innerHTML = '<span>⏳ Analysing...</span>';
+      updateProgress('Starting analysis...', 10);
 
       try {
         const threshold = parseFloat(el.thresholdHours.value);
         const namedLicenseCost = parseFloat(el.namedLicenseCost.value);
         const hourlyLicenseRate = parseFloat(el.hourlyLicenseRate.value);
         const includeNologin = el.includeNologin.value === 'true';
+        updateProgress('Filtering users...', 30);
         
         let usersToAnalyze = appState.userData;
         if (!includeNologin) usersToAnalyze = appState.userData.filter(u => u.interactingMilliseconds > 0 || u.rawLastLogin);
@@ -2003,9 +1590,7 @@
           user.recommendedReason = 'No login activity';
         });
 
-        // Track total hourly hours for cost calculation
-        let totalHourlyHoursForCost = 0;
-        let hourlyAgentUsers = [];
+        updateProgress('Applying business rules...', 50);
         
         usersToAnalyze.forEach(user => {
           const hasNeverLoggedIn = !user.rawLastLogin && user.interactingMilliseconds === 0;
@@ -2017,14 +1602,8 @@
             user.recommendedLicense = 'Named';
             user.recommendedReason = `${user.userType === 'admin' ? 'Admin' : 'Supervisor'} role`;
           } else if (user.interactingHoursDecimal > 0 && user.interactingHoursDecimal < threshold) {
-            // This is an hourly interacting agent
             user.recommendedLicense = 'Hourly Interacting';
             user.recommendedReason = `Under ${threshold} hours (${user.interactingHoursDecimal.toFixed(1)}h)`;
-            
-            // For hourly cost calculation, use the actual hours (capped at threshold)
-            user.hourlyBillableHours = user.interactingHoursDecimal; // Already under threshold
-            totalHourlyHoursForCost += user.hourlyBillableHours;
-            hourlyAgentUsers.push(user);
           } else if (user.interactingHoursDecimal >= threshold) {
             user.recommendedLicense = 'Named';
             user.recommendedReason = `Over ${threshold} hours (${user.interactingHoursDecimal.toFixed(1)}h)`;
@@ -2034,7 +1613,7 @@
           }
 
           if (user.recommendedLicense === 'Hourly Interacting') {
-            user.estimatedCost = user.hourlyBillableHours * hourlyLicenseRate;
+            user.estimatedCost = user.interactingHoursDecimal * hourlyLicenseRate;
           } else if (user.recommendedLicense === 'Named') {
             user.estimatedCost = namedLicenseCost;
           } else {
@@ -2042,29 +1621,22 @@
           }
         });
 
+        updateProgress('Calculating statistics...', 70);
         const totalUsers = usersToAnalyze.length;
         const activeUsers = usersToAnalyze.filter(u => u.interactingMilliseconds > 0).length;
         const namedUsers = usersToAnalyze.filter(u => u.recommendedLicense === 'Named').length;
-        
-        // Hourly Interacting users should only be AGENTS with hours >0 and < threshold
-        const hiUsers = usersToAnalyze.filter(u => 
-          u.recommendedLicense === 'Hourly Interacting' && u.userType === 'agent'
-        ).length;
-        
+        const hiUsers = usersToAnalyze.filter(u => u.recommendedLicense === 'Hourly Interacting').length;
         const nologinUsers = usersToAnalyze.filter(u => u.recommendedLicense === 'NOLOGIN').length;
         const totalHours = usersToAnalyze.reduce((sum, u) => sum + u.interactingHoursDecimal, 0);
-        const avgHours = activeUsers > 0 ? totalHours / activeUsers : 0;
 
-        // Calculate Hourly Interacting details - ONLY for AGENTS
-        const hiAgentUsers = usersToAnalyze.filter(u => 
-          u.recommendedLicense === 'Hourly Interacting' && u.userType === 'agent'
-        );
-        const hiHours = hiAgentUsers.reduce((sum, u) => sum + u.interactingHoursDecimal, 0);
-        const avgHiHours = hiAgentUsers.length > 0 ? hiHours / hiAgentUsers.length : 0;
-        const hourlyCost = totalHourlyHoursForCost * hourlyLicenseRate;
+        // Calculate Hourly Interacting details
+        const hiUsersList = usersToAnalyze.filter(u => u.recommendedLicense === 'Hourly Interacting');
+        const hiHours = hiUsersList.reduce((sum, u) => sum + u.interactingHoursDecimal, 0);
+        const avgHiHours = hiUsers > 0 ? hiHours / hiUsers : 0;
+        const hourlyCost = hiHours * hourlyLicenseRate;
 
         const agentNamed = usersToAnalyze.filter(u => u.userType === 'agent' && u.recommendedLicense === 'Named').length;
-        const agentHI = hiAgentUsers.length; // Already filtered to agents
+        const agentHI = usersToAnalyze.filter(u => u.userType === 'agent' && u.recommendedLicense === 'Hourly Interacting').length;
         const supervisorNamed = usersToAnalyze.filter(u => u.userType === 'supervisor' && u.recommendedLicense === 'Named').length;
         const adminNamed = usersToAnalyze.filter(u => u.userType === 'admin' && u.recommendedLicense === 'Named').length;
 
@@ -2088,7 +1660,6 @@
           hourlyCost,
           nologinUsers,
           totalHours: totalHours.toFixed(2),
-          avgHours: avgHours.toFixed(1),
           threshold,
           namedLicenseCost,
           hourlyLicenseRate,
@@ -2100,71 +1671,52 @@
           agentHI,
           supervisorNamed,
           adminNamed,
-          users: usersToAnalyze,
-          totalHourlyHoursForCost
+          users: usersToAnalyze
         };
 
-        // Update dashboard display
+        updateProgress('Updating display...', 90);
         el.statActiveUsers.textContent = activeUsers;
         el.statNamedUsers.textContent = namedUsers;
-        el.statHiUsers.textContent = hiUsers; // This should show AGENT hourly users
-        el.statNologinUsers.textContent = nologinUsers;
-        
-        // Update recommendation section
-        el.allNamedCount.textContent = totalUsers;
-        el.licenseModel.textContent = optimalModel;
-        el.licenseModelName.textContent = optimalModel;
-        el.licenseModelDetailed.textContent = optimalModel;
-        el.savingsPercentage.textContent = `${savings}%`;
-        
-        // Update delta explanation
-        const totalAgents = appState.userData.filter(u => u.userType === 'agent').length;
-        const nologinAgents = appState.userData.filter(u => u.userType === 'agent' && u.interactingHoursDecimal === 0).length;
-        const nonAgentNamed = supervisorNamed + adminNamed;
-        
-        el.deltaHourlyAgents.textContent = agentHI;
-        el.deltaNamedAgents.textContent = agentNamed;
-        el.deltaNonAgent.textContent = nonAgentNamed;
-        el.deltaNologin.textContent = nologinAgents;
-        
-        // Update Hourly Interacting details
-        el.statHiUsersDetailed.textContent = hiUsers;
-        el.statTotalHiHours.textContent = Math.round(totalHourlyHoursForCost); // Billable hours (capped at threshold)
-        el.statAvgHiHours.textContent = hiUsers > 0 ? (totalHourlyHoursForCost / hiUsers).toFixed(1) : '0';
-        el.statHourlyCost.textContent = `${appState.hourlyCurrencySymbol}${hourlyCost.toFixed(2)}`;
-        el.statHourlyCostDetailed.textContent = `${appState.hourlyCurrencySymbol}${hourlyCost.toFixed(2)}`;
-        
-        updateCurrencyDisplay();
-        
-        el.statTotalHours.textContent = Math.round(totalHours);
-        el.statTotalHoursDetailed.textContent = Math.round(totalHours);
-        el.totalCost.textContent = `${appState.currencySymbol}${parseFloat(hybridCost).toFixed(2)}`;
-        el.savings.textContent = `${savings}% savings`;
-        el.costDetails.innerHTML = `All Named: ${appState.currencySymbol}${parseFloat(allNamedCost).toFixed(2)}<br>Hybrid: ${appState.currencySymbol}${parseFloat(hybridCost).toFixed(2)}`;
-
+        el.statHiUsers.textContent = hiUsers;
+        el.statHiHours.textContent = `${Math.round(hiHours)} hours`;
         el.statAgentNamed.textContent = agentNamed;
         el.statAgentHI.textContent = agentHI;
         el.statSupervisorNamed.textContent = supervisorNamed;
         el.statAdminNamed.textContent = adminNamed;
+        
+        // Update Hourly Interacting details
+        el.statHiUsersDetailed.textContent = hiUsers;
+        el.statTotalHiHours.textContent = Math.round(hiHours);
+        el.statAvgHiHours.textContent = avgHiHours.toFixed(1);
+        el.statHourlyCost.textContent = `${appState.hourlyCurrencySymbol}${hourlyCost.toFixed(2)}`;
+        
+        updateCurrencyDisplay();
+        
+        el.statTotalHours.textContent = Math.round(totalHours);
+        el.totalCost.textContent = `${appState.currencySymbol}${parseFloat(hybridCost).toFixed(2)}`;
+        el.savings.textContent = `${savings}% savings`;
+        el.costDetails.innerHTML = `All Named: ${appState.currencySymbol}${parseFloat(allNamedCost).toFixed(2)}<br>Hybrid: ${appState.currencySymbol}${parseFloat(hybridCost).toFixed(2)}`;
+        el.licenseModel.textContent = optimalModel;
 
         renderUserTable();
         updateHourBuckets();
         updateHourBarChart();
         updateOverageTable();
+        updateProgress('Creating visualisation...', 95);
         createLicenseChart();
-        
+        updateProgress('Analysis complete!', 100);
         setTimeout(() => {
-          logMessage('SUCCESS', 'Analysis complete', `${namedUsers} Named, ${hiUsers} Hourly Interacting AGENTS (${Math.round(hiHours)} hours)`);
-          logMessage('INFO', 'Delta explanation', `Agents: ${agentHI} hourly + ${agentNamed} named + ${nologinAgents} NOLOGIN = ${totalAgents} total agents`);
+          logMessage('SUCCESS', 'Analysis complete', `${namedUsers} Named, ${hiUsers} Hourly Interacting users (${Math.round(hiHours)} hours)`);
+          logMessage('INFO', 'Hourly Interacting details', `${hiUsers} users with >0 hours, ${Math.round(hiHours)} total hours, ${appState.hourlyCurrencySymbol}${hourlyCost.toFixed(2)} cost`);
+          logMessage('INFO', 'NOLOGIN users', `${nologinUsers} users with 0 hours (correctly classified)`);
           logMessage('INFO', 'Cost analysis', `All Named: ${appState.currencySymbol}${allNamedCost}, Hybrid: ${appState.currencySymbol}${hybridCost}, Savings: ${savings}%`);
-          showStatusMessage(`✅ Analysis complete: ${hiUsers} Hourly AGENTS, ${savings}% savings`, 'success');
+          showStatusMessage(`✅ Analysis complete: ${hiUsers} Hourly users (with >0 hours), ${savings}% savings`, 'success');
           el.btnExport.disabled = false;
 
           appState.isAnalyzing = false;
           el.btnRunAnalysis.disabled = false;
           el.btnRunAnalysis.innerHTML = '<span>▶️ Run Analysis</span>';
-          el.btnAnalyze.disabled = false;
-          el.btnAnalyze.innerHTML = '<span>🧮 Analyse & Calculate</span>';
+          updateProgress('Ready to analyse', 0);
         }, 1000);
 
       } catch (error) {
@@ -2173,8 +1725,7 @@
         appState.isAnalyzing = false;
         el.btnRunAnalysis.disabled = false;
         el.btnRunAnalysis.innerHTML = '<span>▶️ Run Analysis</span>';
-        el.btnAnalyze.disabled = false;
-        el.btnAnalyze.innerHTML = '<span>🧮 Analyse & Calculate</span>';
+        updateProgress('Ready to analyse', 0);
       }
     }
 
@@ -2186,7 +1737,6 @@
         el.totalCost.textContent = `${appState.currencySymbol}${parseFloat(appState.analysisResults.hybridCost).toFixed(2)}`;
         el.costDetails.innerHTML = `All Named: ${appState.currencySymbol}${parseFloat(appState.analysisResults.allNamedCost).toFixed(2)}<br>Hybrid: ${appState.currencySymbol}${parseFloat(appState.analysisResults.hybridCost).toFixed(2)}`;
         el.statHourlyCost.textContent = `${appState.hourlyCurrencySymbol}${appState.analysisResults.hourlyCost.toFixed(2)}`;
-        el.statHourlyCostDetailed.textContent = `${appState.hourlyCurrencySymbol}${appState.analysisResults.hourlyCost.toFixed(2)}`;
       }
     }
 
@@ -2494,7 +2044,7 @@
 
       bucketLabels.forEach(label => {
         const data = buckets[label];
-        const barHeight = maxValue > 0 ? (data.totalHours / maxValue * 80) + 20 : 20; // Minimum 20% height for visibility
+        const barHeight = maxValue > 0 ? (data.totalHours / maxValue * 100) : 0;
         const bar = document.createElement('div');
         bar.className = 'hour-bar';
         bar.style.height = `${barHeight}%`;
@@ -2583,8 +2133,8 @@
       csv += `Total Users,${results.totalUsers}\n`;
       csv += `Active Users,${results.activeUsers}\n`;
       csv += `Named Users,${results.namedUsers}\n`;
-      csv += `Hourly Interacting AGENTS,${results.hiUsers}\n`;
-      csv += `Hourly Interacting Hours (Billable),${Math.round(results.totalHourlyHoursForCost)}\n`;
+      csv += `Hourly Interacting Users,${results.hiUsers}\n`;
+      csv += `Hourly Interacting Hours,${Math.round(results.hiHours)}\n`;
       csv += `Hourly Interacting Cost,${appState.hourlyCurrencySymbol}${results.hourlyCost.toFixed(2)}\n`;
       csv += `NOLOGIN Users,${results.nologinUsers}\n`;
       csv += `Total Hours,${Math.round(results.totalHours)}\n`;
@@ -2595,9 +2145,9 @@
 
       csv += 'HOURLY INTERACTING DETAILS\n';
       csv += 'Metric,Value\n';
-      csv += `Hourly AGENTS,${results.hiUsers}\n`;
-      csv += `Total Billable Hours,${Math.round(results.totalHourlyHoursForCost)}\n`;
-      csv += `Average Hours per Agent,${results.avgHiHours.toFixed(1)}\n`;
+      csv += `Hourly Users,${results.hiUsers}\n`;
+      csv += `Total Hourly Hours,${Math.round(results.hiHours)}\n`;
+      csv += `Average Hours per User,${results.avgHiHours.toFixed(1)}\n`;
       csv += `Hourly Cost,${appState.hourlyCurrencySymbol}${results.hourlyCost.toFixed(2)}\n\n`;
 
       csv += 'ROLE-BASED ANALYSIS\n';
@@ -2608,10 +2158,10 @@
       csv += `Admin,Named Users,${results.adminNamed}\n\n`;
 
       csv += 'USER DETAILS\n';
-      csv += 'Name,Email,Team,Role Type,Roles,Last Login,Interacting Time (HH:MM:SS),Interacting Time (hours),Recommended Licence,Reason,Estimated Cost,Billable Hours\n';
+      csv += 'Name,Email,Team,Role Type,Roles,Last Login,Interacting Time (HH:MM:SS),Interacting Time (hours),Recommended Licence,Reason,Estimated Cost\n';
 
       results.users.forEach(user => {
-        csv += `"${user.name || ''}","${user.email || ''}","${user.team || ''}","${user.userType || ''}","${user.role || ''}","${user.lastLogin || 'Never'}","${user.interactingHoursFormatted}",${Math.round(user.interactingHoursDecimal)},"${user.recommendedLicense || ''}","${user.recommendedReason || ''}",${(user.estimatedCost || 0).toFixed(2)},${(user.hourlyBillableHours || 0).toFixed(2)}\n`;
+        csv += `"${user.name || ''}","${user.email || ''}","${user.team || ''}","${user.userType || ''}","${user.role || ''}","${user.lastLogin || 'Never'}","${user.interactingHoursFormatted}",${Math.round(user.interactingHoursDecimal)},"${user.recommendedLicense || ''}","${user.recommendedReason || ''}",${(user.estimatedCost || 0).toFixed(2)}\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -2637,7 +2187,7 @@
         el.statActiveUsers.textContent = '0';
         el.statNamedUsers.textContent = '0';
         el.statHiUsers.textContent = '0';
-        el.statNologinUsers.textContent = '0';
+        el.statHiHours.textContent = '0 hours';
         el.statAgents.textContent = '0';
         el.statSupervisors.textContent = '0';
         el.statAdmins.textContent = '0';
@@ -2650,15 +2200,10 @@
         el.statTotalHiHours.textContent = '0';
         el.statAvgHiHours.textContent = '0';
         el.statHourlyCost.textContent = `${appState.hourlyCurrencySymbol}0`;
-        el.statHourlyCostDetailed.textContent = `${appState.hourlyCurrencySymbol}0`;
-        el.savingsPercentage.textContent = '0%';
-        el.allNamedCount.textContent = '0';
         el.totalCost.textContent = `${appState.currencySymbol}0`;
         el.savings.textContent = '0% savings';
         el.costDetails.innerHTML = '';
         el.licenseModel.textContent = 'Hybrid';
-        el.licenseModelName.textContent = 'Hybrid';
-        el.licenseModelDetailed.textContent = 'Hybrid';
         el.totalCount.textContent = '0';
         el.visibleCount.textContent = '0';
         el.totalUsersCount.textContent = '0';
@@ -2666,11 +2211,6 @@
         el.btnAnalyze.disabled = true;
         el.btnRunAnalysis.disabled = true;
         el.btnExport.disabled = true;
-
-        el.deltaHourlyAgents.textContent = '0';
-        el.deltaNamedAgents.textContent = '0';
-        el.deltaNonAgent.textContent = '0';
-        el.deltaNologin.textContent = '0';
 
         el.usersTableBody.innerHTML = `
           <tr><td colspan="8" style="text-align:center;padding:48px;color:var(--text-light);">
@@ -2715,11 +2255,8 @@
 
       // Event listeners
       el.btnFetchData.addEventListener('click', fetchUserData);
-      
-      // Both analysis buttons should trigger the same function
       el.btnRunAnalysis.addEventListener('click', runAnalysis);
       el.btnAnalyze.addEventListener('click', runAnalysis);
-      
       el.btnExport.addEventListener('click', exportReport);
       el.btnReset.addEventListener('click', resetApplication);
 
